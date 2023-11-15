@@ -13,6 +13,7 @@ html {
   font-family: "Pixelify Sans", sans-serif;
   margin: 0; /* Agregado para quitar el margen por defecto */
   overflow: hidden; /* Evita que aparezca la barra de desplazamiento en el fondo */
+  user-select: none !important;
 }
 #main-container {
   transition: transform 0.3s ease; /* Agregada transición */

@@ -224,13 +224,11 @@ function animarMonstruo(monstruoElement, velocidad) {
     quitarVidaMonstruo(monstruoElement);
   });
   actualizarVida(monstruoElement);
-  var totalPasos = 0;
-  var pasoActual = 0;
+
   var velocidad = monstruoElement.velocidad;
+
   var intervaloAtaque = setInterval(function () {
-    // Incrementar el contador de pasos
-    pasoActual++;
-    var rangoCasaCercana = 800; // Rango para considerar una casa cercana en píxeles
+    var rangoCasaCercana = 3; // Rango para considerar una casa cercana en píxeles
     var casaCercana = encontrarCasaCercana(monstruoElement, rangoCasaCercana);
 
     if (casaCercana) {
@@ -244,19 +242,11 @@ function animarMonstruo(monstruoElement, velocidad) {
       clearInterval(intervaloAtaque);
     } else {
       // Si no hay casa cercana, seguir moviéndose hacia la última posición conocida de una casa
-      totalPasos = Math.max(
-        Math.abs(monstruoElement.offset().left - ultimaCasaConocidaX),
-        Math.abs(monstruoElement.offset().top - ultimaCasaConocidaY)
-      );
-      moverHaciaUltimaCasaConocida(monstruoElement, totalPasos, velocidad);
-    }
-
-    // Si se han dado todos los pasos, detener la animación
-    if (pasoActual >= totalPasos) {
-      clearInterval(intervaloAtaque);
+      moverHaciaCasaCercana(monstruoElement, velocidad);
     }
   }, 1000 / velocidad);
 }
+
 function encontrarCasaCercana(monstruoElement, rangoAtaque) {
   // Obtener la posición del monstruo
   var monstruoX = monstruoElement.offset().left + monstruoElement.width() / 2;
@@ -283,7 +273,7 @@ function encontrarCasaCercana(monstruoElement, rangoAtaque) {
       distanciaCercana = distancia;
     }
   });
-  console.log(casa);
+ 
   if (casaCercana == null) {
     continuarHaciaCentro(monstruoElement);
     console.log('Centro');
@@ -291,7 +281,45 @@ function encontrarCasaCercana(monstruoElement, rangoAtaque) {
 
   return casaCercana;
 }
+function moverHaciaCasaCercana(monstruoElement, velocidad) {
+  // Obtener todas las casas en la página
+  var casas = $('.casa');
+  
+  // Encontrar la casa más cercana
+  var casaCercana = encontrarCasaCercana(monstruoElement, casas);
+  
+  if (casaCercana) {
+    // Almacenar la posición de la casa conocida
+    var casaCercanaX = casaCercana.offset().left + casaCercana.width() / 2;
+    var casaCercanaY = casaCercana.offset().top + casaCercana.height() / 2;
 
+    // Calcular la distancia entre el monstruo y la casa cercana
+    var distanciaX = casaCercanaX - monstruoElement.offset().left;
+    var distanciaY = casaCercanaY - monstruoElement.offset().top;
+
+    // Calcular la cantidad total de pasos necesarios
+    var totalPasos = Math.max(Math.abs(distanciaX), Math.abs(distanciaY));
+
+    // Iniciar el intervalo para moverse hacia la casa más cercana
+    var pasoActual = 0;
+    var intervaloMovimiento = setInterval(function () {
+      // Incrementar el contador de pasos
+      pasoActual++;
+
+      // Calcular la posición actual del monstruo en este paso
+      var pasoX = monstruoElement.offset().left + (distanciaX / totalPasos);
+      var pasoY = monstruoElement.offset().top + (distanciaY / totalPasos);
+
+      // Mover el monstruo un paso
+      monstruoElement.offset({ left: pasoX, top: pasoY });
+
+      // Si se han dado todos los pasos, detener el intervalo
+      if (pasoActual >= totalPasos) {
+        clearInterval(intervaloMovimiento);
+      }
+    }, 1000 / velocidad);
+  }
+}
 function continuarHaciaCentro(monstruoElement) {
   var centroMineral = $(".mineral-centro");
   var centroX = centroMineral.offset().left + centroMineral.width() / 2;
@@ -369,19 +397,17 @@ function actualizarVidaCasas(casaElement) {
   }
 }
 
-function moverHaciaUltimaCasaConocida(monstruoElement) {
-  if (ultimaCasaConocidaX !== null && ultimaCasaConocidaY !== null) {
-    // Obtener la posición actual del monstruo
-    var velocidad = monstruoElement.velocidad;
-    var monstruoX = monstruoElement.offset().left + monstruoElement.width() / 2;
-    var monstruoY = monstruoElement.offset().top + monstruoElement.height() / 2;
+function moverHaciaUltimaCasaConocida(monstruoElement, totalPasos, velocidad) {
+  var pasoActual = 0;
+
+  var intervaloMovimiento = setInterval(function () {
+    // Incrementar el contador de pasos
+    pasoActual++;
 
     // Calcular la dirección hacia la última posición conocida de una casa
-    var direccionX = ultimaCasaConocidaX - monstruoX;
-    var direccionY = ultimaCasaConocidaY - monstruoY;
-    var distancia = Math.sqrt(
-      direccionX * direccionX + direccionY * direccionY
-    );
+    var direccionX = ultimaCasaConocidaX - monstruoElement.offset().left - monstruoElement.width() / 2;
+    var direccionY = ultimaCasaConocidaY - monstruoElement.offset().top - monstruoElement.height() / 2;
+    var distancia = Math.sqrt(direccionX * direccionX + direccionY * direccionY);
 
     // Normalizar la dirección
     var pasoX = direccionX / distancia;
@@ -392,6 +418,10 @@ function moverHaciaUltimaCasaConocida(monstruoElement) {
       left: "+=" + pasoX * velocidad,
       top: "+=" + pasoY * velocidad,
     });
-   
-  }
+
+    // Si se han dado todos los pasos, detener la animación
+    if (pasoActual >= totalPasos) {
+      clearInterval(intervaloMovimiento);
+    }
+  }, 1000 / velocidad);
 }
