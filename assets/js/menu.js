@@ -15,6 +15,7 @@ $("#menu-down").on("click", function () {
 });
 
 $(document).ready(function () {
+  $("#botonesCompra, #botonesCompra2, #botonesCompra3, #botonesCompra4").empty();
   for (var i = 0; i < 6; i++) {
     var botonHtml = `
             <div class="col-2 mb-2">
@@ -115,7 +116,7 @@ $(document).ready(function () {
     scale += e.originalEvent.deltaY > 0 ? -0.1 : 0.1;
 
     // Limita la escala a un rango razonable
-    scale = Math.min(Math.max(0.5, scale), 3);
+    scale = Math.min(Math.max(0.7, scale), 1);
 
     // Aplica la transformación de escala solo a los elementos que deben escalar
     $("#main-container").css("transform", "scale(" + scale + ")");

@@ -2,7 +2,7 @@ var coin = 99999999999999;
 var casasPosiciones = [];
 var pastoRocaPosiciones = [];
 var tiempo = 1;
-var aumentoPrecio = 1.2;
+var aumentoPrecio = 1.3;
 var produccionPorMinuto = {};
 
 generarPastoRoca();
@@ -167,11 +167,17 @@ function comprarCasa(indice) {
       // Incrementar el precio para la próxima compra
       tiposDeCasas[indice].precio = tiposDeCasas[indice].precio * aumentoPrecio;
 
+      var getprecio = $(".precioCasa[data-indice='" + indice + "']:first");
+      var getcantidad = $(".cantidadCasa[data-indice='" + indice + "']:first");
+
       var precioElement = $(".precioCasa[data-indice='" + indice + "']");
       var cantidadElement = $(".cantidadCasa[data-indice='" + indice + "']");
-      var cantidad = parseInt(cantidadElement.text()) + 1;
-      precioElement.text(parseInt(tiposDeCasas[indice].precio));
-      cantidadElement.text(cantidad);
+            
+      var cantidad = parseInt(getcantidad.text()) + 1;
+      var precioActual = parseInt(getprecio.text()) || 0; // Obtiene el precio actual o establece 0 si es NaN
+      var nuevoPrecio = parseInt(precioActual + tiposDeCasas[indice].precio);
+      precioElement.empty().text(nuevoPrecio);
+      cantidadElement.empty().text(cantidad);
 
       // Obtener las coordenadas del centro de .mineral-centro
       var centroMineral = $(".mineral-centro");
@@ -207,7 +213,7 @@ function comprarCasa(indice) {
         .text("❤️: " + vidaInicial)
         .css({
           position: "absolute",
-          left: centroCasaX - vidaElement.width() / -100 + "px",
+          left: centroCasaX - vidaElement.width() / - 1500 + "px",
           top: centroCasaY + casaElement.height() / 2 + "px",
           fontSize: "14px",
           fontWeight: "500",
@@ -220,17 +226,16 @@ function comprarCasa(indice) {
       // Mostrar el cuadrado de la casa
       var casaSquare = $("#casaSquare");
       casaSquare.css({ left: x + "px", top: y + "px", display: "block" });
+      
+      setInterval(function(){
+        actualizarProduccionPorMinuto(indice);
+        actualizarVidaCasa(casaElement, vidaElement);
+      },(1000 / tiempo));
 
       setInterval(function () {
         coin += tiposDeCasas[indice].produccion * tiempo;
         $(".coinCounter").text(coin);
-        actualizarProduccionPorMinuto(indice);
-
-        // Animación para el número de producción
         mostrarNumeroProduccion(tiposDeCasas[indice].produccion, x, y);
-
-        // Actualizar la vida de la casa
-        actualizarVidaCasa(casaElement, vidaElement);
       }, (tiposDeCasas[indice].tiempo * 1000) / tiempo);
     }else{
       sendLogs('Saldo insuficiente');
@@ -257,9 +262,9 @@ function actualizarVidaCasa(casaElement, vidaElement) {
 }
 
 function encontrarPosicionLibre(posicionesOcupadas, centroX, centroY) {
-  var maxRadio = 300; // Radio máximo del círculo
+  var maxRadio = 200; // Radio máximo del círculo
   var intentos = 0;
-  var maxIntentos = 60;
+  var maxIntentos = 10;
   while (intentos < maxIntentos) {
     // Genera coordenadas polares aleatorias dentro del círculo
     var radio = Math.random() * maxRadio;
