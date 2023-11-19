@@ -10,14 +10,14 @@ generarPastoRoca();
 var tiposDeDefensas = [
   {
     nombre: "Flecheros",
-    id: "c-1",
+    id: "1",
     precio: 50, // Aumentado el precio
     produccion: 2, // Reducida la producción
     tiempo: 10, // 1 cada 1 segundo
   },
   {
     nombre: "Guerreros",
-    id: "c-2",
+    id: "2",
     precio: 500, // Aumentado el precio
     produccion: 5, // Reducida la producción
     tiempo: 10, // 5 cada 1 segundo
@@ -25,15 +25,15 @@ var tiposDeDefensas = [
 ];
 var tiposDeMejoras = [
   {
-    nombre: "Flecheros",
-    id: "c-1",
+    nombre: "Generacion",
+    id: "1",
     precio: 50, // Aumentado el precio
     produccion: 2, // Reducida la producción
     tiempo: 10, // 1 cada 1 segundo
   },
   {
-    nombre: "Guerreros",
-    id: "c-2",
+    nombre: "Daño",
+    id: "2",
     precio: 500, // Aumentado el precio
     produccion: 5, // Reducida la producción
     tiempo: 10, // 5 cada 1 segundo
@@ -140,7 +140,7 @@ function mostrarNumeroProduccion(produccion, x, y) {
   $("#casasContainer").append(number);
 
   // Animar el número antes de desaparecer
-  number.animate({ top: "-=20", opacity: 0 }, 600, function () {
+  number.animate({ top: "-=20", opacity: 0 }, 700, function () {
     number.remove();
   });
 }
@@ -179,10 +179,8 @@ function comprarCasa(indice) {
       precioElement.empty().text(nuevoPrecio);
       cantidadElement.empty().text(cantidad);
 
-      // Obtener las coordenadas del centro de .mineral-centro
-      var centroMineral = $(".mineral-centro");
-      var centroX = centroMineral.offset().left + centroMineral.width() / 2;
-      var centroY = centroMineral.offset().top + centroMineral.height() / 2;
+      var centroX = 1270;
+      var centroY = 1210;
 
       var posicionLibre = encontrarPosicionLibre(
         casasPosiciones,
@@ -262,7 +260,7 @@ function actualizarVidaCasa(casaElement, vidaElement) {
 }
 
 function encontrarPosicionLibre(posicionesOcupadas, centroX, centroY) {
-  var maxRadio = 200; // Radio máximo del círculo
+  var maxRadio = 400; // Radio máximo del círculo
   var intentos = 0;
   var maxIntentos = 10;
   while (intentos < maxIntentos) {
@@ -279,7 +277,7 @@ function encontrarPosicionLibre(posicionesOcupadas, centroX, centroY) {
       var distancia = Math.sqrt(
         Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2)
       );
-      return distancia < 20;
+      return distancia < 40;
     });
 
     if (!ocupada) {

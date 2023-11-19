@@ -15,11 +15,14 @@ $("#menu-down").on("click", function () {
 });
 
 $(document).ready(function () {
-  $("#botonesCompra, #botonesCompra2, #botonesCompra3, #botonesCompra4").empty();
+  $(
+    "#botonesCompra, #botonesCompra2, #botonesCompra3, #botonesCompra4"
+  ).empty();
+
   for (var i = 0; i < 6; i++) {
     var botonHtml = `
             <div class="col-2 mb-2">
-              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 14px;">
+              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 12px;">
                   <div style="opacity: 1;">
                   <div class="row">
                       <div class="col-4">
@@ -39,14 +42,15 @@ $(document).ready(function () {
           `;
     $("#botonesCompra").append(botonHtml);
   }
+
   for (var i = 0; i < tiposDeCasas.length; i++) {
     var botonHtml2 = `
             <div class="col-2 mb-2">
-              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 14px;">
+              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 12px;">
                   <div style="opacity: 1;">
                   <div class="row">
-                      <div class="col-4">
-                      <img class="my-auto" src="./assets/img/${tiposDeCasas[i].id}.png" style="width: 60px; height:50px;" alt="${tiposDeCasas[i].nombre}">
+                  <div class="col-3">
+                  <img class="mt-2 mx-auto" src="./assets/img/${tiposDeCasas[i].id}.png" style="width: 50px; height:50px;" alt="${tiposDeCasas[i].nombre}">
                       </div>
                       <div class="col-8">
                       ${tiposDeCasas[i].nombre} <br>
@@ -65,16 +69,16 @@ $(document).ready(function () {
   for (var i = 0; i < tiposDeDefensas.length; i++) {
     var botonHtml3 = `
       <div class="col-2 mb-2">
-        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 14px;">
+        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarDefensa(${i})" style="opacity: 0.9;font-size: 12px;">
             <div style="opacity: 1;">
             <div class="row">
-                <div class="col-4">
-                <img class="my-auto" src="./assets/img/${tiposDeDefensas[i].id}.png" style="width: 60px; height:50px;" alt="${tiposDeDefensas[i].nombre}">
+                <div class="col-3">
+                <img class="mt-2 mx-auto" src="./assets/img/items/Icons_0${tiposDeDefensas[i].id}.png" style="width: 30px; height:30px;" alt="${tiposDeDefensas[i].nombre}">
                 </div>
                 <div class="col-8">
                 ${tiposDeDefensas[i].nombre} <br>
-                Precio: $<span class="precioCasa" data-indice="${i}">${tiposDeDefensas[i].precio}</span><br>
-                Cantidad: <span class="cantidadCasa" data-indice="${i}">0</span>
+                Precio: $<span class="precioDefensa" data-indice="${i}">${tiposDeDefensas[i].precio}</span><br>
+                Cantidad: <span class="cantidadDfensa" data-indice="${i}">0</span>
                 </div>
             </div>
           
@@ -88,16 +92,16 @@ $(document).ready(function () {
   for (var i = 0; i < tiposDeMejoras.length; i++) {
     var botonHtml4 = `
       <div class="col-2 mb-2">
-        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 14px;">
+        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarMejoras(${i})" style="opacity: 0.9;font-size: 12px;">
             <div style="opacity: 1;">
             <div class="row">
-                <div class="col-4">
-                <img class="my-auto" src="./assets/img/${tiposDeMejoras[i].id}.png" style="width: 60px; height:50px;" alt="${tiposDeMejoras[i].nombre}">
+              <div class="col-3">
+                <img class="mt-2 mx-auto" src="./assets/img/items/Icons_0${tiposDeMejoras[i].id}.png" style="width: 30px; height:30px;" alt="${tiposDeMejoras[i].nombre}">
                 </div>
                 <div class="col-8">
                 ${tiposDeMejoras[i].nombre} <br>
-                Precio: $<span class="precioCasa" data-indice="${i}">${tiposDeMejoras[i].precio}</span><br>
-                Cantidad: <span class="cantidadCasa" data-indice="${i}">0</span>
+                Precio: $<span class="precioMejoras" data-indice="${i}">${tiposDeMejoras[i].precio}</span><br>
+                Cantidad: <span class="cantidadMejoras" data-indice="${i}">0</span>
                 </div>
             </div>
           
