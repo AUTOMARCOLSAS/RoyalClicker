@@ -3,7 +3,7 @@ var lastMousePosition = {
   x: 0,
   y: 0,
 };
-var velocityFactor = 0.6;
+var velocityFactor = 0.8;
 
 $("#menu-up").on("click", function () {
   $("#menu-1").slideUp("slow"); // Efecto de desaparición hacia arriba
@@ -18,11 +18,10 @@ $(document).ready(function () {
   $(
     "#botonesCompra, #botonesCompra2, #botonesCompra3, #botonesCompra4"
   ).empty();
-
   for (var i = 0; i < 6; i++) {
     var botonHtml = `
-            <div class="col-2 mb-2">
-              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 12px;">
+            <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-2">
+              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 14px;">
                   <div style="opacity: 1;">
                   <div class="row">
                       <div class="col-4">
@@ -42,15 +41,14 @@ $(document).ready(function () {
           `;
     $("#botonesCompra").append(botonHtml);
   }
-
   for (var i = 0; i < tiposDeCasas.length; i++) {
     var botonHtml2 = `
-            <div class="col-2 mb-2">
-              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 12px;">
+            <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-2">
+              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 14px;">
                   <div style="opacity: 1;">
                   <div class="row">
-                  <div class="col-3">
-                  <img class="mt-2 mx-auto" src="./assets/img/${tiposDeCasas[i].id}.png" style="width: 50px; height:50px;" alt="${tiposDeCasas[i].nombre}">
+                      <div class="col-4">
+                      <img class="my-auto" src="./assets/img/${tiposDeCasas[i].id}.png" style="width: 60px; height:50px;" alt="${tiposDeCasas[i].nombre}">
                       </div>
                       <div class="col-8">
                       ${tiposDeCasas[i].nombre} <br>
@@ -68,17 +66,17 @@ $(document).ready(function () {
   }
   for (var i = 0; i < tiposDeDefensas.length; i++) {
     var botonHtml3 = `
-      <div class="col-2 mb-2">
-        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarDefensa(${i})" style="opacity: 0.9;font-size: 12px;">
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-2">
+        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa_Tropas(${i})" style="opacity: 0.9;font-size: 14px;">
             <div style="opacity: 1;">
             <div class="row">
-                <div class="col-3">
-                <img class="mt-2 mx-auto" src="./assets/img/items/Icons_0${tiposDeDefensas[i].id}.png" style="width: 30px; height:30px;" alt="${tiposDeDefensas[i].nombre}">
+                <div class="col-4">
+                <img class="my-auto" src="./assets/img/${tiposDeDefensas[i].id}.png" style="width: 60px; height:50px;" alt="${tiposDeDefensas[i].nombre}">
                 </div>
                 <div class="col-8">
                 ${tiposDeDefensas[i].nombre} <br>
                 Precio: $<span class="precioDefensa" data-indice="${i}">${tiposDeDefensas[i].precio}</span><br>
-                Cantidad: <span class="cantidadDfensa" data-indice="${i}">0</span>
+                Cantidad: <span class="cantidadDefensa" data-indice="${i}">0</span>
                 </div>
             </div>
           
@@ -91,17 +89,17 @@ $(document).ready(function () {
   }
   for (var i = 0; i < tiposDeMejoras.length; i++) {
     var botonHtml4 = `
-      <div class="col-2 mb-2">
-        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarMejoras(${i})" style="opacity: 0.9;font-size: 12px;">
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-2">
+        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarMejora(${i})" style="opacity: 0.9;font-size: 14px;">
             <div style="opacity: 1;">
             <div class="row">
-              <div class="col-3">
-                <img class="mt-2 mx-auto" src="./assets/img/items/Icons_0${tiposDeMejoras[i].id}.png" style="width: 30px; height:30px;" alt="${tiposDeMejoras[i].nombre}">
+                <div class="col-4">
+                <img class="my-auto" src="./assets/img/icons/${tiposDeMejoras[i].id}.png" style="width: 40px; height:40px;" alt="${tiposDeMejoras[i].nombre}">
                 </div>
                 <div class="col-8">
                 ${tiposDeMejoras[i].nombre} <br>
-                Precio: $<span class="precioMejoras" data-indice="${i}">${tiposDeMejoras[i].precio}</span><br>
-                Cantidad: <span class="cantidadMejoras" data-indice="${i}">0</span>
+                Precio: $<span class="precioMejora" data-indice="${i}">${tiposDeMejoras[i].precio}</span><br>
+                Cantidad: <span class="cantidadMejora" data-indice="${i}">0</span>
                 </div>
             </div>
           
@@ -120,7 +118,7 @@ $(document).ready(function () {
     scale += e.originalEvent.deltaY > 0 ? -0.1 : 0.1;
 
     // Limita la escala a un rango razonable
-    scale = Math.min(Math.max(0.7, scale), 1);
+    scale = Math.min(Math.max(0.5, scale), 1);
 
     // Aplica la transformación de escala solo a los elementos que deben escalar
     $("#main-container").css("transform", "scale(" + scale + ")");
@@ -181,7 +179,7 @@ function getRandomPosition() {
 function createCloud() {
   var containerClouds = $("#container-clouds");
 
-  for (var i = 0; i < 25; i++) {
+  for (var i = 0; i < 27; i++) {
     var x = Math.random() * 100 + "%";
     var y = Math.random() * 100 + "%";
 

@@ -16,6 +16,8 @@
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"
         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,23 +27,25 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="icon" href="./assets/img/icons/Icons_01.png" type="image/x-icon">
     <link rel="shortcut icon" href="./assets/img/icons/Icons_01.png" type="image/x-icon">
+    
 
 </head>
 
+
 <div class="fixed-top py-2 menu-container">
-    <div class="container  mt-lg-2">
+    <div class="container mx-auto mt-lg-2">
         <div class="row">
             <div class="col-3 text-end align-self-start text-start">
-                <div class="bg-dark text-white rounded-pill px-3 py-1" style="opacity: 0.9;">
+                <div class="bg-dark text-white rounded-pill px-2 py-1" style="opacity: 0.9; font-size: 14px;">
                     <div style="opacity: 1 !important;" class="text-start">
-                        <span class="mb-0"></span>Sebastian Vargaz<img src="./assets/img/icons/Icons_17.png" alt=""
-                            style="width: 30px; margin-left: 10px;">
+                        <img src="./assets/img/icons/Icons_33.png" alt=""
+                            style="width: 30px; margin-left: 10px;"><span class="mb-0"></span>Sebastian Vargaz
                     </div>
                 </div>
             </div>
             <div class="col-6"></div>
             <div class="col-3 text-end align-self-end justify-content-end align-items-end">
-                <div class="bg-dark text-white rounded-pill px-3 py-1" style="opacity: 0.9;">
+                <div class="bg-dark text-white rounded-pill px-2 py-1" style="opacity: 0.9;">
                     <div style="opacity: 1 !important;">
                         <span class="coinCounter mb-0"></span><img src="./assets/img/coin.png" alt=""
                             style="width: 30px; margin-left: 10px;">
@@ -50,17 +54,23 @@
             </div>
         </div>
         <div class="row ">
-            <div class="col-3 text-end align-self-start text-start">
+            <div class="col-3 text-start align-self-start text-start">
                 <div class="bg-dark text-white rounded-pill px-3 mt-2 py-1" style="opacity: 0.9;">
                     <div style="opacity: 1 !important;" class="text-start">
                         <img src="./assets/img/icons/Icons_08.png" id="oleadas" alt=""
-                            style="width: 30px; margin-left: 4px;">Oleada #<span class="mb-0"
+                            style="width: 30px; margin-left: 4px; font-size: 14px;">Oleada #<span class="mb-0"
                             id="oleadas_counter"></span>
                     </div>
                 </div>
-                <span class="mb-0 text-white fw-semibold"><span id="time_oleada">500</span> segundos para la siguiente
-                    oleada</span>
+                <span class="mb-0 text-white fw-semibold" style="font-size: 14px;">
+                 <span id="time_oleada">500</span> segundos para la siguiente oleada</span>
+                </span>
+                <br>
+                <span class="mb-0 text-white fw-semibold">
+                    <span id="multiplicador_tiempo">1</span>x Multiplicador de tiempo</span>
+                </span>
             </div>
+            
             <div class="col-7"></div>
             <div class="col-2 text-end align-self-end justify-content-end align-items-end " id="info-houses"></div>
         </div>
@@ -87,7 +97,7 @@
 </div>
 <div class="fixed-bottom py-2 menu-container">
     <div class="container" id="menu-1">
-        <div class="col-4 p-2 mb-1">
+        <div class="col-2 col-md-4 p-2 mb-1">
             <p id="logs"></p>
         </div>
         <div class="col-12 text-center mb-3 p-0">
@@ -102,8 +112,8 @@
 
 <body class="w-100">
     <div class="bg-container" id="main-container">
-        
         <div id="game-container" class="scalable-element">
+            <div id="proyectiles" style="position:absolute; width: 100%; height: 100%; z-index: 10000;"></div>
             <div id="container-clouds"></div>
             <div id="pastoRocaContainer"></div>
             <div class="center-div">
@@ -113,17 +123,19 @@
                 <p class="text-dark text-white p-0 m-0">Click here to Generate Gold</p>
             </div>
             <div class="bg-fondo">
+                <div id="tropas_container"></div>
                 <div id="casaSquare" class="casa-square"></div>
                 <div id="casasContainer"></div>
             </div>
         </div>
     </div>
 
-
-    <script src="./assets/js/index.js"></script>
-    <script src="./assets/js/oleadas.js"></script>
-    <script src="./assets/js/menu.js"></script>
     <script src="./assets/js/tropas.js"></script>
+    <script src="./assets/js/index.js"></script>
+    <script src="./assets/js/menu.js"></script>
+    <script src="./assets/js/oleadas.js"></script>
+  
+      
 </body>
 
 </html>

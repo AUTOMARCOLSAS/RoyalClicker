@@ -1,45 +1,57 @@
 var portales = [];
 var monstruosPorPortal = 1;
 var oleadasPasadas = 0;
-var tiempoEntreOleadas = 5 * 60 * 1000; // 5 minutos
+var tiempo = 1;
+var tiempoEntreOleadas = 5 * 60 * 1000; // 2 minutos
 var tiempoRestanteEntreOleadas = tiempoEntreOleadas;
 var danio = 10; // daño por click hacia los mounstros
 var log = 0;
 var ultimaCasaConocidaX = null;
 var ultimaCasaConocidaY = null;
 
+var clouds = document.querySelectorAll('.cloud');
+var duracionAnimacion = 100 / tiempo; // Convertir segundos a milisegundos
+
+clouds.forEach(function (cloud) {
+  cloud.style.animationDuration = duracionAnimacion + 's';
+});
+
 $("#oleadas_counter").text(oleadasPasadas);
 var tiposDeMonstruos = [
   {
     nombre: "Duende",
-    vida: 10,
-    velocidad: 7,
-    width: 50,
-    height: 50,
+    vida: 30,
+    velocidad: 4,
+    width: 40,
+    height: 40,
+    daño: 1,
     sprite: "url(./assets/img/enemys/2/D_Walk.png)",
   },
   {
     nombre: "Lobo",
     vida: 20,
-    velocidad: 16,
+    velocidad: 4,
     width: 50,
     height: 50,
+    daño: 2,
     sprite: "url(./assets/img/enemys/3/D_Walk.png)",
   },
   {
     nombre: "Alfa",
     vida: 70,
-    velocidad: 18,
+    velocidad:  12,
     width: 60,
     height: 60,
+    daño: 4,
     sprite: "url(./assets/img/enemys/3/D_Walk.png)",
   },
   {
     nombre: "Orco",
-    vida: 100,
-    velocidad: 7,
+    vida: 150,
+    velocidad: 12,
     width: 75,
     height: 75,
+    daño: 6,
     sprite: "url(./assets/img/enemys/2/D_Walk.png)",
   },
   // Agrega más tipos de monstruos según tus necesidades
@@ -67,7 +79,7 @@ iniciarOleadas();
 function iniciarOleadas() {
   setInterval(function () {
     tiempoRestanteEntreOleadas -= 1000;
-
+    $('#multiplicador_tiempo').text(tiempo);
     // Actualizar el tiempo restante en el elemento #time_oleada
     $("#time_oleada").text(convertirTiempo(tiempoRestanteEntreOleadas));
 
@@ -76,12 +88,12 @@ function iniciarOleadas() {
       generarOleada();
       tiempoRestanteEntreOleadas = tiempoEntreOleadas;
     }
-  }, 1000);
+  }, 1000 / tiempo);
 }
 // Función para generar un portal en los bordes del mapa
 function generarPortal() {
   oleadasPasadas++;
-  monstruosPorPortal *= 1.2;
+  monstruosPorPortal *= 1.1;
   var x, y;
 
   // Elegir aleatoriamente entre los bordes superior/inferior y izquierdo/derecho
@@ -121,10 +133,10 @@ function generarMonstruo() {
   for (let i = 0; i < monstruosPorPortal; i++) {
     var tipoMonstruo =
       tiposDeMonstruos[Math.floor(Math.random() * tiposDeMonstruos.length)];
-    var desplazamientoX = Math.random() * 20; // Ajusta según tus necesidades
-    var desplazamientoY = Math.random() * 20; // Ajusta según tus necesidades
+    var desplazamientoX = Math.random() * 100; // Ajusta según tus necesidades
+    var desplazamientoY = Math.random() * 100; // Ajusta según tus necesidades
 
-    var monstruoElement = $("<div class='monstruo'>").css({
+    var monstruoElement = $("<div class='monstruo hover:cursor-pointer'>").css({
       position: "absolute",
       left: desplazamientoX + "px",
       top: desplazamientoY + "px",
@@ -137,7 +149,7 @@ function generarMonstruo() {
     });
 
     // Añadir vida al monstruo
-    var vidaMonstruo = tipoMonstruo.vida; // Ajusta según tus necesidades
+    var vidaMonstruo = tipoMonstruo.vida +( tipoMonstruo.vida * (oleadasPasadas/100)); // Ajusta según tus necesidades
     var vidaElement = $("<p class='vidaMonstruo text-white '>").text(
       "❤️: " + vidaMonstruo
     );
@@ -149,11 +161,13 @@ function generarMonstruo() {
     );
     monstruoElement.append(nombreElement);
 
-    var idMonstruoLocal = parseInt(Math.random() * (100000000 - 1) + 1);
+    var idMonstruoLocal = parseInt(Math.random() * (10000000000 - 1) + 1);
     monstruoElement.attr("id", "monstruo_" + idMonstruoLocal);
     monstruoElement.attr("vida", vidaMonstruo);
+    monstruoElement.attr("velocidad", tipoMonstruo.velocidad);
+    monstruoElement.attr("daño", tipoMonstruo.daño);
     $(".portal").append(monstruoElement);
-    animarMonstruo(monstruoElement, tipoMonstruo.velocidad);
+    animarMonstruo(monstruoElement);
   }
 }
 
@@ -176,10 +190,12 @@ function actualizarVida(monstruoElement) {
 
 // Función para quitar vida al monstruo y mostrar el daño
 function quitarVidaMonstruo(monstruoElement) {
+
   var vidaActual = monstruoElement.attr("vida");
   var idMonstruo = monstruoElement.attr("id");
 
   vidaActual -= danio;
+  
 
   var danioElement = $(
     "<div class='danio-monstruo bg-dark px-2 rounded-pill '>" +
@@ -191,12 +207,12 @@ function quitarVidaMonstruo(monstruoElement) {
   // Posicionar el elemento del daño sobre el monstruo
   danioElement.css({
     position: "absolute",
-    top: monstruoElement.offset().top + monstruoElement.width() / 2,
+    top: monstruoElement.offset().top + monstruoElement.height() / 5,
     left: monstruoElement.offset().left + monstruoElement.width() / 2,
   });
 
-  // Agregar el elemento del daño al contenedor del mapa
-  $("#pastoRocaContainer").append(danioElement);
+    // Agregar el elemento del daño al mismo contenedor que el monstruo
+    $('#main-container').parent().append(danioElement);
 
   // Se borra después de 2 segundos
   setTimeout(function () {
@@ -212,42 +228,66 @@ function quitarVidaMonstruo(monstruoElement) {
   // Verificar si la vida del monstruo ha llegado a cero y eliminarlo si es el caso
   if (vidaActual <= 0) {
     monstruoElement.remove();
-    console.log("Monstruo ID: " + idMonstruo + " eliminado");
-    console.log(monstruoElement);
+    sendLogs("💀 " + idMonstruo + " eliminado");
   }
 }
 
-// intligencia de los mobs o enemigos
+function animarMonstruo(monstruoElement) {
 
-function animarMonstruo(monstruoElement, velocidad) {
-  monstruoElement.on("click", function () {
-    quitarVidaMonstruo(monstruoElement);
-  });
+    monstruoElement.on("click", function () {
+      quitarVidaMonstruo(monstruoElement);
+    });
+
   actualizarVida(monstruoElement);
 
-  var velocidad = monstruoElement.velocidad;
+  var intervaloAtaque; // Declara la variable fuera del intervalo
 
-  var intervaloAtaque = setInterval(function () {
-    var rangoCasaCercana = 3; // Rango para considerar una casa cercana en píxeles
+  // Función para manejar el ataque y la búsqueda de casas cercanas
+  function manejarAtaque() {
+    var rangoCasaCercana = 1500; // Rango para considerar una casa cercana en píxeles
     var casaCercana = encontrarCasaCercana(monstruoElement, rangoCasaCercana);
 
     if (casaCercana) {
       // Almacena la posición de la casa conocida
-      ultimaCasaConocidaX = casaCercana.offset().left + casaCercana.width() / 2;
-      ultimaCasaConocidaY = casaCercana.offset().top + casaCercana.height() / 2;
-
+      ultimaCasaConocidaX = casaCercana.offset().left + casaCercana.width() / 1;
+      ultimaCasaConocidaY = casaCercana.offset().top + casaCercana.height() / 1;
       // Cambiar la dirección hacia la casa cercana y atacarla
       atacarCasa(monstruoElement, casaCercana);
-      // Detener el intervalo para evitar conflictos con el ataque
-      clearInterval(intervaloAtaque);
     } else {
       // Si no hay casa cercana, seguir moviéndose hacia la última posición conocida de una casa
-      moverHaciaCasaCercana(monstruoElement, velocidad);
+      moverHaciaCasaCercana(monstruoElement);
     }
-  }, 1000 / velocidad);
+  }
+
+  // Iniciar el intervalo de ataque
+  intervaloAtaque = setInterval(manejarAtaque, 1000 / tiempo);
+
+  var velocidad = monstruoElement.attr("velocidad");
+
+  var intervaloMovimiento = setInterval(function () {
+    // Función para manejar el movimiento hacia la última casa conocida
+    function manejarMovimiento() {
+      // Obtener todas las casas en la página
+      var casaCercana = encontrarCasaCercana(monstruoElement, 1200); // Rango de búsqueda de casas cercanas
+
+      if (casaCercana) {
+        clearInterval(intervaloAtaque); // Detener el intervalo de ataque
+        clearInterval(intervaloMovimiento); // Detener el intervalo de movimiento
+
+        manejarAtaque(); // Realizar el ataque a la casa cercana
+      } else {
+        // Si no hay casa cercana, continuar moviéndose hacia la última casa conocida
+        moverHaciaCasaCercana(monstruoElement);
+      }
+    }
+
+    manejarMovimiento(); // Llamar a la función de manejo de movimiento
+  }, (1000 / velocidad) / tiempo  );
+  
 }
 
 function encontrarCasaCercana(monstruoElement, rangoAtaque) {
+  
   // Obtener la posición del monstruo
   var monstruoX = monstruoElement.offset().left + monstruoElement.width() / 2;
   var monstruoY = monstruoElement.offset().top + monstruoElement.height() / 2;
@@ -273,21 +313,28 @@ function encontrarCasaCercana(monstruoElement, rangoAtaque) {
       distanciaCercana = distancia;
     }
   });
+
+  
+  // Si no se encontró ninguna casa dentro del rango, devolver null para indicar que no hay casa cercana
+  if (!casaCercana) {
  
-  if (casaCercana == null) {
-    continuarHaciaCentro(monstruoElement);
-    console.log('Centro');
+    return null;
   }
 
   return casaCercana;
 }
-function moverHaciaCasaCercana(monstruoElement, velocidad) {
+
+
+function moverHaciaCasaCercana(monstruoElement) {
   // Obtener todas las casas en la página
-  var casas = $('.casa');
-  
+  var velocidad = monstruoElement.attr("velocidad");
+  var factorTiempo = tiempo; // Ajusta esto según el factor de tiempo actual
+  var velocidadAjustada = velocidad * factorTiempo;
+
   // Encontrar la casa más cercana
-  var casaCercana = encontrarCasaCercana(monstruoElement, casas);
-  
+  var rangoAtaque = 800; // Define aquí el rango de ataque adecuado
+  var casaCercana = encontrarCasaCercana(monstruoElement, rangoAtaque);
+
   if (casaCercana) {
     // Almacenar la posición de la casa conocida
     var casaCercanaX = casaCercana.offset().left + casaCercana.width() / 2;
@@ -302,126 +349,158 @@ function moverHaciaCasaCercana(monstruoElement, velocidad) {
 
     // Iniciar el intervalo para moverse hacia la casa más cercana
     var pasoActual = 0;
-    var intervaloMovimiento = setInterval(function () {
-      // Incrementar el contador de pasos
-      pasoActual++;
+    var intervaloMovimiento = setInterval(
+      function () {
+        // Incrementar el contador de pasos
+        pasoActual++;
 
-      // Calcular la posición actual del monstruo en este paso
-      var pasoX = monstruoElement.offset().left + (distanciaX / totalPasos);
-      var pasoY = monstruoElement.offset().top + (distanciaY / totalPasos);
+        // Calcular la posición actual del monstruo en este paso
+        var pasoX = monstruoElement.offset().left + distanciaX / totalPasos;
+        var pasoY = monstruoElement.offset().top + distanciaY / totalPasos;
 
-      // Mover el monstruo un paso
-      monstruoElement.offset({ left: pasoX, top: pasoY });
+        // Mover el monstruo un paso
+        monstruoElement.offset({ left: pasoX, top: pasoY });
 
-      // Si se han dado todos los pasos, detener el intervalo
-      if (pasoActual >= totalPasos) {
-        clearInterval(intervaloMovimiento);
-      }
-    }, 1000 / velocidad);
+        // Si se han dado todos los pasos, detener el intervalo
+        if (pasoActual >= totalPasos) {
+          clearInterval(intervaloMovimiento);
+        }
+      },
+      1000  / tiempo // Ajusta la velocidad según el tiempo
+    );
+  } else {
+
+    var distanciaPasoX = velocidadAjustada * 0.1; // Ajusta la distancia de cada paso
+    var distanciaPasoY = velocidadAjustada * 0.1; // Ajusta la distancia de cada paso
+    var totalPasosAleatorios = Math.max(Math.abs(distanciaPasoX), Math.abs(distanciaPasoY));
+    // Realizar un bucle para mover el monstruo en múltiples pasos aleatorios
+    for (var i = 0; i < totalPasosAleatorios; i++) {
+      // Calcular la dirección aleatoria
+      var direccionX = Math.random() * 2 - 1; // Valor entre -1 y 1
+      var direccionY = Math.random() * 2 - 1; // Valor entre -1 y 1
+
+      // Calcular el paso de movimiento en la dirección aleatoria
+      var pasoX = monstruoElement.offset().left + distanciaPasoX * direccionX;
+      var pasoY = monstruoElement.offset().top + distanciaPasoY * direccionY;
+
+      // Mover la unidad en la dirección aleatoria
+      monstruoElement.animate(
+        { left: pasoX, top: pasoY },
+        50000 / tiempo // Ajusta la velocidad según el tiempo y la velocidad del monstruo
+      );
+    }
   }
 }
-function continuarHaciaCentro(monstruoElement) {
-  var centroMineral = $(".mineral-centro");
-  var centroX = centroMineral.offset().left + centroMineral.width() / 2;
-  var centroY = centroMineral.offset().top + centroMineral.height() / 2;
 
-  var velocidad = monstruoElement.velocidad;
-
-  var intervaloCentro = setInterval(function () {
-    // Obtener la posición actual del monstruo
-    var monstruoX = monstruoElement.offset().left + monstruoElement.width() / 2;
-    var monstruoY = monstruoElement.offset().top + monstruoElement.height() / 2;
-
-    // Calcular la dirección hacia el centro
-    var direccionX = centroX - monstruoX;
-    var direccionY = centroY - monstruoY;
-    var distancia = Math.sqrt(
-      direccionX * direccionX + direccionY * direccionY
-    );
-
-    // Normalizar la dirección
-    var pasoX = direccionX / distancia;
-    var pasoY = direccionY / distancia;
-
-    // Mover el monstruo un paso hacia el centro
-    monstruoElement.css({
-      left: "+=" + pasoX * velocidad,
-      top: "+=" + pasoY * velocidad,
-    });
-
-    // Si ha llegado al centro, detener el intervalo
-    if (distancia < velocidad) {
-      clearInterval(intervaloCentro);
-    }
-  }, 1000 / velocidad);
-}
 
 function atacarCasa(monstruoElement, casaElement) {
-  var velocidadAtaque = 1000; // Tiempo entre cada ataque en milisegundos
-
-  // Configurar un temporizador para golpear la casa cada cierto tiempo
+  var daño = monstruoElement.attr("daño") || 0;
+  var amenaza = 0;
+  // Configurar un temporizador para mover al monstruo hacia la casa y golpearla
   var temporizadorAtaque = setInterval(function () {
-    // Reducir la vida de la casa en 1 (ajusta según tus necesidades)
-    var vidaCasa = parseInt(casaElement.data("vida")) || 0;
-    vidaCasa -= 1;
+    var monstruoX = monstruoElement.offset().left + monstruoElement.width() / 2;
+    var monstruoY = monstruoElement.offset().top + monstruoElement.height() / 2;
+    var casaX = casaElement.offset().left + casaElement.width() / 2;
+    var casaY = casaElement.offset().top + casaElement.height() / 2;
 
-    // Actualizar la vida de la casa
-    casaElement.data("vida", vidaCasa);
+    // Calcular la distancia entre el monstruo y la casa
+    var distancia = Math.sqrt(
+      Math.pow(monstruoX - casaX, 2) + Math.pow(monstruoY - casaY, 2)
+    );
 
-    actualizarVidaCasas(casaElement);
+    // Si el monstruo está a menos de 4 píxeles de la casa, golpearla
+    if (distancia <= 3) {
+      amenaza++;
+     
+      if (amenaza >= 5) {
+        sendLogs("⛔ Estas siendo atacado");
+        amenaza = 0;
+      }
+      var vidaCasa = casaElement.data("vida") || 0;
+      vidaCasa = vidaCasa - daño;
 
-    // Si la vida de la casa llega a cero, detener el ataque
-    if (vidaCasa <= 0) {
-      clearInterval(temporizadorAtaque);
-      casaElement.remove();
-      console.log("Monstruo ha destruido la casa");
+      if (vidaCasa < 0 || isNaN(vidaCasa)) {
+        vidaCasa = 0;
+      }
+
+      casaElement.data("vida", vidaCasa);
+      actualizarVidaCasas(casaElement);
+
+      console.log("Casa ha recibido un golpe, " + vidaCasa + " restantes");
+
+      // Si la vida de la casa llega a cero, detener el ataque
+      if (vidaCasa <= 0) {
+        clearInterval(temporizadorAtaque);
+        sendLogs("🚩 Una edificacion a sido destruida");
+        casaElement.remove();
+      }
+    } else {
+      amenaza = 0;
+      // Si el monstruo está a más de 4 píxeles de la casa, moverlo hacia la casa
+      var direccionX = casaX - monstruoX;
+      var direccionY = casaY - monstruoY;
+      var distanciaTotal = Math.sqrt(
+        direccionX * direccionX + direccionY * direccionY
+      );
+
+      // Normalizar la dirección
+      var pasoX = direccionX / distanciaTotal;
+      var pasoY = direccionY / distanciaTotal;
+
+      // Mover el monstruo hacia la casa
+      monstruoElement.css({
+        left: "+=" + pasoX * 4,
+        top: "+=" + pasoY * 4,
+      });
     }
-  }, velocidadAtaque);
+  }, 1000);
 }
 
 function actualizarVidaCasas(casaElement) {
-  var vidaActual = parseInt(casaElement.attr("vida")) || 0;
+  var vidaActual = casaElement.attr("vida") || 0;
   var idCasa = casaElement.attr("id");
-
   // Seleccionar el elemento de vida dentro del monstruo
   var vidaElement = $("#vida_" + idCasa);
-  console.log(vidaElement);
   // Actualizar el texto de la vida
   vidaElement.text("❤️: " + vidaActual);
-
-  // Verificar si la vida del monstruo ha llegado a cero y eliminarlo si es el caso
-  if (isNaN(vidaActual) || vidaActual <= 0) {
-    // Puedes elegir si eliminar solo el elemento de vida o la casa completa
-    vidaElement.remove();
-    casaElement.remove();
-  }
 }
 
 function moverHaciaUltimaCasaConocida(monstruoElement, totalPasos, velocidad) {
   var pasoActual = 0;
 
-  var intervaloMovimiento = setInterval(function () {
-    // Incrementar el contador de pasos
-    pasoActual++;
+  var intervaloMovimiento = setInterval(
+    function () {
+      // Incrementar el contador de pasos
+      pasoActual++;
 
-    // Calcular la dirección hacia la última posición conocida de una casa
-    var direccionX = ultimaCasaConocidaX - monstruoElement.offset().left - monstruoElement.width() / 2;
-    var direccionY = ultimaCasaConocidaY - monstruoElement.offset().top - monstruoElement.height() / 2;
-    var distancia = Math.sqrt(direccionX * direccionX + direccionY * direccionY);
+      // Calcular la dirección hacia la última posición conocida de una casa
+      var direccionX =
+        ultimaCasaConocidaX -
+        monstruoElement.offset().left -
+        monstruoElement.width() / 2;
+      var direccionY =
+        ultimaCasaConocidaY -
+        monstruoElement.offset().top -
+        monstruoElement.height() / 2;
+      var distancia = Math.sqrt(
+        direccionX * direccionX + direccionY * direccionY
+      );
 
-    // Normalizar la dirección
-    var pasoX = direccionX / distancia;
-    var pasoY = direccionY / distancia;
+      // Normalizar la dirección
+      var pasoX = direccionX / distancia;
+      var pasoY = direccionY / distancia;
 
-    // Mover el monstruo un paso hacia la última posición conocida de una casa
-    monstruoElement.css({
-      left: "+=" + pasoX * velocidad,
-      top: "+=" + pasoY * velocidad,
-    });
+      // Mover el monstruo un paso hacia la última posición conocida de una casa
+      monstruoElement.css({
+        left: "+=" + pasoX * velocidad,
+        top: "+=" + pasoY * velocidad,
+      });
 
-    // Si se han dado todos los pasos, detener la animación
-    if (pasoActual >= totalPasos) {
-      clearInterval(intervaloMovimiento);
-    }
-  }, 1000 / velocidad);
+      // Si se han dado todos los pasos, detener la animación
+      if (pasoActual >= totalPasos) {
+        clearInterval(intervaloMovimiento);
+      }
+    },
+    1000 / velocidad / tiempo
+  );
 }

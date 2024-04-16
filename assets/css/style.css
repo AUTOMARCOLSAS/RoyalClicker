@@ -94,7 +94,9 @@ html {
 .c-1 {
   background-image: url("../../assets/img/c-1.png");
 }
-
+.d-1 {
+  background-image: url("../../assets/img/c-1.png");
+}
 .c-2 {
   background-image: url("../../assets/img/c-2.png");
 }
@@ -124,7 +126,13 @@ html {
   transition: transform 0.2s;
 }
 
-.plus-one, .danio-monstruo {
+.danio-monstruo{
+  font-size: 15px;
+  font-weight: 400;
+  color: rgb(236, 33, 33);
+  z-index: 500000 !important;
+}
+.plus-one {
   font-size: 15px;
   font-weight: 400;
   color: white;
@@ -209,9 +217,9 @@ html {
   position: absolute;
   z-index: 60 !important;
   background-size: contain;
-  opacity: 0.7 !important;
+  opacity: 0.6 !important;
   background-repeat: no-repeat;
-  animation: moveCloud 200s linear infinite; /* Añadí la duración y 'infinite' para repeticiones infinitas */
+  animation: moveCloud 100s linear infinite; /* Añadí la duración y 'infinite' para repeticiones infinitas */
 }
 .cloud-1 {
   width: 400px;
@@ -251,7 +259,7 @@ html {
 }
 
 .soldado{
-  background-image: url(../img/S_Preattack.png);
+  background-image: url(../img/Man_walk.png);
   background-position: center;
   background-size: cover;
 }
@@ -265,3 +273,37 @@ html {
   margin-top: 52%;
 }
 
+.proyectil {
+  width: 10px;
+  height: 10px;
+  background-color: black;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 100; /* Asegura que la esfera esté por encima de otros elementos */
+}
+.d-1:hover::after {
+  content: "";
+  position: absolute;
+  width: 400px; /* Diámetro del círculo */
+  height: 400px; /* Diámetro del círculo */
+  border-radius: 50%; /* Hace que el borde sea redondo */
+  background-color: rgba(255, 0, 0, 0.2); /* Color del círculo */
+  top: calc(-280%); /* Posición vertical del círculo */
+  border: 1px red solid;
+  border-color: red;
+  left: calc(-260% ); /* Posición horizontal del círculo */
+  pointer-events: none; /* Evita que el círculo interfiera con eventos de mouse */
+  z-index: -1; /* Coloca el círculo detrás del contenido de la casa */
+}
+.casa .d-2:hover::after {
+  content: "";
+  position: absolute;
+  width: 100px; /* Diámetro del círculo */
+  height: 100px; /* Diámetro del círculo */
+  border-radius: 50%; /* Hace que el borde sea redondo */
+  background-color: rgba(255, 0, 0, 0.2); /* Color del círculo */
+  top: calc(50% - 50px); /* Posición vertical del círculo */
+  left: calc(50% - 50px); /* Posición horizontal del círculo */
+  pointer-events: none; /* Evita que el círculo interfiera con eventos de mouse */
+  z-index: -1; /* Coloca el círculo detrás del contenido de la casa */
+}

@@ -1,42 +1,52 @@
-var coin = 99999999999999;
+var coin = 500000000000000000;
+var genclick = 1;
 var casasPosiciones = [];
 var pastoRocaPosiciones = [];
 var tiempo = 1;
 var aumentoPrecio = 1.3;
 var produccionPorMinuto = {};
+var centroX;
+var centroY;
+var radioInicial = 200;
+// Obtener las coordenadas del centro al cargar la página
+$(document).ready(function() {
+  var centroMineral = $(".mineral-centro");
+  centroX = centroMineral.offset().left + centroMineral.width() / 2;
+  centroY = centroMineral.offset().top + centroMineral.height() / 2;
+});
 
 generarPastoRoca();
 
 var tiposDeDefensas = [
   {
+    nombre: "Guerreros",
+    id: "d-1",
+    precio: 100, // Aumentado el precio
+    produccion: 5, // Reducida la producción
+    tiempo: 10, // 5 cada 1 segundo
+    daño: 10,
+  },
+  {
     nombre: "Flecheros",
-    id: "1",
+    id: "d-2",
     precio: 50, // Aumentado el precio
     produccion: 2, // Reducida la producción
     tiempo: 10, // 1 cada 1 segundo
+    daño: 10,
   },
-  {
-    nombre: "Guerreros",
-    id: "2",
-    precio: 500, // Aumentado el precio
-    produccion: 5, // Reducida la producción
-    tiempo: 10, // 5 cada 1 segundo
-  },
+  
 ];
+
 var tiposDeMejoras = [
   {
-    nombre: "Generacion",
-    id: "1",
-    precio: 50, // Aumentado el precio
-    produccion: 2, // Reducida la producción
-    tiempo: 10, // 1 cada 1 segundo
+    nombre: "Generador principal",
+    id: "m-1",
+    precio: 100, // Aumentado el precio
   },
   {
-    nombre: "Daño",
-    id: "2",
-    precio: 500, // Aumentado el precio
-    produccion: 5, // Reducida la producción
-    tiempo: 10, // 5 cada 1 segundo
+    nombre: "Daño por Click",
+    id: "m-2",
+    precio: 100, // Aumentado el precio
   },
 ];
 var tiposDeCasas = [
@@ -85,29 +95,27 @@ var tiposDeCasas = [
   {
     nombre: "Extractor de Petroleo",
     id: "c-6",
-    precio: 900000, // Aumentado el precio
-    produccion: 80000, // Reducida la producción
-    tiempo: 1,
+    precio: 1900000, // Aumentado el precio
+    produccion: 200000, // Reducida la producción
+    tiempo: 0.8,
   },
   {
     nombre: "Planta Nuclear",
     id: "c-6",
-    precio: 900000, // Aumentado el precio
-    produccion: 80000, // Reducida la producción
-    tiempo: 1,
+    precio: 5000000, // Aumentado el precio
+    produccion: 200000, // Reducida la producción
+    tiempo: 0.5,
   },
   {
     nombre: "Generador Cuantico",
     id: "c-6",
-    precio: 900000, // Aumentado el precio
-    produccion: 80000, // Reducida la producción
-    tiempo: 1,
+    precio: 10000000, // Aumentado el precio
+    produccion: 500000, // Reducida la producción
+    tiempo: 0.2,
   },
 ];
 
 function clicker() {
-  var genclick = 1;
-  genclick = parseInt(genclick * tiempo);
   coin += genclick;
   $(".coinCounter").text(coin);
   $(".mineral-centro").css({
@@ -140,7 +148,7 @@ function mostrarNumeroProduccion(produccion, x, y) {
   $("#casasContainer").append(number);
 
   // Animar el número antes de desaparecer
-  number.animate({ top: "-=20", opacity: 0 }, 700, function () {
+  number.animate({ top: "-=20", opacity: 0 }, 600, function () {
     number.remove();
   });
 }
@@ -153,7 +161,7 @@ function sendLogs(logs) {
     $("#logs").append(divlogs);
   
     // Animar el número antes de desaparecer
-    divlogs.animate({ top: "-=20", opacity: 0 }, 10000, function () {
+    divlogs.animate({ top: "-=40", opacity: 0 }, 4000, function () {
       divlogs.remove();
     });
   }
@@ -165,7 +173,7 @@ function comprarCasa(indice) {
       coin -= parseInt(tiposDeCasas[indice].precio);
 
       // Incrementar el precio para la próxima compra
-      tiposDeCasas[indice].precio = tiposDeCasas[indice].precio * aumentoPrecio;
+      tiposDeCasas[indice].precio = tiposDeCasas[indice].precio * 1.5;
 
       var getprecio = $(".precioCasa[data-indice='" + indice + "']:first");
       var getcantidad = $(".cantidadCasa[data-indice='" + indice + "']:first");
@@ -179,8 +187,11 @@ function comprarCasa(indice) {
       precioElement.empty().text(nuevoPrecio);
       cantidadElement.empty().text(cantidad);
 
-      var centroX = 1270;
-      var centroY = 1210;
+      // Obtener las coordenadas del centro de .mineral-centro
+      var centroMineral = $(".mineral-centro");
+      var centroX = centroMineral.offset().left + centroMineral.width() / 2;
+      var centroY = centroMineral.offset().top + centroMineral.height() / 2;
+
 
       var posicionLibre = encontrarPosicionLibre(
         casasPosiciones,
@@ -240,6 +251,44 @@ function comprarCasa(indice) {
     }
   }
 }
+function comprarMejora(indice) {
+  if (indice < tiposDeCasas.length) {
+    if (coin >= parseInt(tiposDeCasas[indice].precio)) {
+      coin -= parseInt(tiposDeCasas[indice].precio);
+
+      // Incrementar el precio para la próxima compra
+      tiposDeCasas[indice].precio = tiposDeCasas[indice].precio * aumentoPrecio;
+
+      var getprecio = $(".precioMejora[data-indice='" + indice + "']:first");
+      var getcantidad = $(".cantidadMejora[data-indice='" + indice + "']:first");
+
+      var precioElement = $(".precioMejora[data-indice='" + indice + "']");
+      var cantidadElement = $(".cantidadMejora[data-indice='" + indice + "']");
+            
+      var cantidad = parseInt(getcantidad.text()) + 1;
+      var precioActual = parseInt(getprecio.text()) || 0; // Obtiene el precio actual o establece 0 si es NaN
+      var nuevoPrecio = parseInt(precioActual + tiposDeCasas[indice].precio);
+      precioElement.empty().text(nuevoPrecio);
+      cantidadElement.empty().text(cantidad);
+      console.log(tiposDeCasas[indice].id);
+      if (tiposDeCasas[indice].id == 'm-1') {
+        genclick *= 2.3;
+        genclick = Math.round(genclick);
+      }
+      if (tiposDeCasas[indice].id == 'm-2') {
+        danio *= 1.6;
+        danio = Math.round(danio);
+      }
+      
+      console.log(genclick + ' - ' + danio + ' / ' + cantidad);
+
+
+      
+    }else{
+      sendLogs('Saldo insuficiente');
+    }
+  }
+}
 
 function actualizarVidaCasa(casaElement, vidaElement) {
   // Obtener la vida actual de la casa
@@ -252,46 +301,43 @@ function actualizarVidaCasa(casaElement, vidaElement) {
   casaElement.data("vida", vidaActual);
 
   // Verificar si la casa ha perdido toda su vida
-  if (vidaActual <= 0 ) {
-    // Realizar acciones cuando la casa pierde toda su vida (por ejemplo, eliminarla)
-    // En este ejemplo, simplemente la ocultamos
-    vidaElement.text("❤️: 0");
+  if (isNaN(vidaActual) || vidaActual <= 0 || vidaActual == 'undefined') {
+    vidaElement.remove();
+    casaElement.remove();
   }
 }
 
-function encontrarPosicionLibre(posicionesOcupadas, centroX, centroY) {
-  var maxRadio = 400; // Radio máximo del círculo
-  var intentos = 0;
-  var maxIntentos = 10;
-  while (intentos < maxIntentos) {
-    // Genera coordenadas polares aleatorias dentro del círculo
-    var radio = Math.random() * maxRadio;
-    var angulo = Math.random() * 2 * Math.PI;
+function encontrarPosicionLibre(posicionesOcupadas) {
+  var radio = radioInicial; // Inicializar el radio con el valor predeterminado
+  var numCasas = posicionesOcupadas.length + 1; // Número total de casas incluyendo la nueva
+  var angulo = (Math.PI * 2) / numCasas; // Ángulo entre cada casa
+  var posicionLibre;
 
-    // Convierte coordenadas polares a cartesianas
-    var x = radio * Math.cos(angulo) + centroX;
-    var y = radio * Math.sin(angulo) + centroY;
+  // Encontrar el ángulo inicial para la nueva casa
+  var anguloInicial = Math.random() * Math.PI * 2;
 
-    var ocupada = posicionesOcupadas.some(function (pos) {
-      // Verifica si la distancia es menor que un umbral
-      var distancia = Math.sqrt(
-        Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2)
-      );
-      return distancia < 40;
-    });
+  // Calcular las coordenadas polares de la nueva casa
+  var x = centroX + radio * Math.cos(anguloInicial);
+  var y = centroY + radio * Math.sin(anguloInicial);
 
-    if (!ocupada) {
-      return { x: x, y: y };
-    }
+  // Verificar si la posición está ocupada
+  var ocupada = posicionesOcupadas.some(function (pos) {
+    var distancia = Math.sqrt(Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2));
+    return distancia < 35; // Umbral de distancia mínimo entre casas
+  });
 
-    intentos++;
+  // Si la posición está ocupada, ajustar dinámicamente el radio
+  if (ocupada) {
+    radioInicial += 1; // Aumentar el radio en 50 unidades
+    return encontrarPosicionLibre(posicionesOcupadas);
+  } else {
+    // Si la posición está libre, devolver las coordenadas
+    posicionLibre = { x: x, y: y };
   }
 
-  return {
-    x: centroX,
-    y: centroY,
-  };
+  return posicionLibre;
 }
+
 
 function generator() {
   for (var i = 0; i < tiposDeCasas.length; i++) {
