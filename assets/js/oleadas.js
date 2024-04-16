@@ -94,25 +94,23 @@ function iniciarOleadas() {
 function generarPortal() {
   oleadasPasadas++;
   monstruosPorPortal *= 1.1;
-  var x, y;
-
-  // Elegir aleatoriamente entre los bordes superior/inferior y izquierdo/derecho
-  if (Math.random() < 0.5) {
-    // Bordes superior e inferior
-    x = Math.random() * 1000; // Ajusta según el tamaño de tu mapa
-    y = Math.random() < 0.5 ? 0 : 1000; // 0 para superior, 2600 para inferior
-  } else {
-    // Bordes izquierdo y derecho
-    x = Math.random() < 0.5 ? 0 : 1000; // 0 para izquierdo, 2600 para derecho
-    y = Math.random() * 1000; // Ajusta según el tamaño de tu mapa
-  }
-  log =
-    "⚔️ Generando Oleada en Cordenadas X: " +
-    parseInt(x) +
-    " Y: " +
-    parseInt(y) +
-    "";
+  
+  // Coordenadas del centro predeterminadas
+  var centerX = centroX;
+  var centerY = centroY;
+  var radius = 1000; // Radio del círculo
+  
+  // Generar un ángulo aleatorio
+  var angle = Math.random() * Math.PI * 2;
+  
+  // Calcular las coordenadas dentro del círculo usando trigonometría
+  var x = centerX + Math.cos(angle) * radius;
+  var y = centerY + Math.sin(angle) * radius;
+  
+  // Imprimir las coordenadas generadas
+  var log = "⚔️ Generando Oleada en Cordenadas X: " + parseInt(x) + " Y: " + parseInt(y) + "";
   sendLogs(log);
+  
   // Crear el elemento del portal y agregarlo al contenedor del mapa
   var portalElement = $("<div class='portal'>").css({
     position: "absolute",
@@ -128,13 +126,14 @@ function generarPortal() {
   generarMonstruo();
 }
 
+
 // Función para generar un monstruo
 function generarMonstruo() {
   for (let i = 0; i < monstruosPorPortal; i++) {
     var tipoMonstruo =
       tiposDeMonstruos[Math.floor(Math.random() * tiposDeMonstruos.length)];
-    var desplazamientoX = Math.random() * 100; // Ajusta según tus necesidades
-    var desplazamientoY = Math.random() * 100; // Ajusta según tus necesidades
+    var desplazamientoX = Math.random() * 220; // Ajusta según tus necesidades
+    var desplazamientoY = Math.random() * 350; // Ajusta según tus necesidades
 
     var monstruoElement = $("<div class='monstruo hover:cursor-pointer'>").css({
       position: "absolute",
