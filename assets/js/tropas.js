@@ -1,4 +1,4 @@
-var maxTropas = 5;
+var maxTropas = 1
 
 function quitarVidaMonstruo2(monstruoElement, daño) {
   var vidaActual = monstruoElement.attr("vida");
@@ -15,12 +15,12 @@ function quitarVidaMonstruo2(monstruoElement, daño) {
   // Posicionar el elemento del daño sobre el monstruo
   danioElement.css({
     position: "absolute",
-    top: monstruoElement.offset().top + monstruoElement.height() / 5,
+    top: monstruoElement.offset().top + monstruoElement.height() / 2,
     left: monstruoElement.offset().left + monstruoElement.width() / 2,
   });
 
   // Agregar el elemento del daño al mismo contenedor que el monstruo
-  $('#main-container').parent().append(danioElement);
+  $('#casasContainer').parent().append(danioElement);
 
   // Se borra después de 2 segundos
   setTimeout(function () {
@@ -31,12 +31,14 @@ function quitarVidaMonstruo2(monstruoElement, daño) {
 
   monstruoElement.attr("vida", vidaActual);
   actualizarVida(monstruoElement);
-  console.log("Daño: " + danio + " a Monstruo ID: " + idMonstruo);
 
   // Verificar si la vida del monstruo ha llegado a cero y eliminarlo si es el caso
   if (vidaActual <= 0) {
     monstruoElement.remove();
-    sendLogs("💀 " + idMonstruo + " eliminado");
+    var elementos = document.querySelectorAll('.monstruo').length;
+    if (elementos == 0) {a
+      $("body").removeClass("luna-de-sangre");
+    }
   }
 }
 
@@ -111,6 +113,8 @@ function comprarCasa_Tropas(indice) {
       // Mostrar el cuadrado de la casa
       var casaSquare = $("#casaSquare");
       casaSquare.css({ left: x + "px", top: y + "px", display: "block" });
+      casaElement.attr("x",x);
+      casaElement.attr("y",y);
 
       setInterval(function () {
         actualizarVidaCasa(casaElement, vidaElement);
@@ -122,28 +126,37 @@ function comprarCasa_Tropas(indice) {
         // Verificar si el número máximo de tropas no se ha alcanzado
         if (casaElement.data("tropas") < maxTropas) {
           // Llamar a la función para generar proyectiles
-          generarProyectil(casaElement, $(".monstruo")); // Puedes ajustar cómo obtienes el monstruo aquí
+          generarProyectil(casaElement); // Puedes ajustar cómo obtienes el monstruo aquí
         }
-      }, 1000 / tiempo); // Cambia el tiempo según la velocidad deseada de generación de unidades
+      }, 6000 / tiempo); // Cambia el tiempo según la velocidad deseada de generación de unidades
     } else {
       sendLogs('Saldo insuficiente');
     }
   }
 }
 
+// Definir una variable para almacenar información de proyectiles
+var proyectilesEnVuelo = {};
+
 function generarProyectil(torreElement) {
   // Obtener todos los monstruos en la página
   var monstruos = $(".monstruo");
-  var danio = torreElement.attr("daño") || 1;
-  // Encontrar el monstruo más cercano dentro del radio de 300px
+  var daño = torreElement.attr("daño") || 1;
+  var casaX = parseInt(torreElement.attr("x")) + torreElement.width() / 2; // Obtener el centro de la casa en el eje X
+  var casaY = parseInt(torreElement.attr("y")) + torreElement.height() / 2; // Obtener el centro de la casa en el eje Y
+
+  // Declarar el proyectilId fuera del bloque if
+  var proyectilId;
+
+  // Encontrar el monstruo más cercano dentro del radio de búsqueda
   var monstruoMasCercano = null;
-  var distanciaMasCorta = 300; // Radio de búsqueda
+  var distanciaMasCorta = Infinity; // Inicializar con un valor muy grande
 
   monstruos.each(function () {
     var monstruo = $(this);
     var distancia = Math.sqrt(
-      Math.pow(torreElement.offset().left - monstruo.offset().left, 2) +
-      Math.pow(torreElement.offset().top - monstruo.offset().top, 2)
+      Math.pow(casaX - monstruo.offset().left, 2) +
+      Math.pow(casaY - monstruo.offset().top, 2)
     );
 
     // Verificar si este monstruo está dentro del radio de búsqueda y es el más cercano
@@ -154,26 +167,50 @@ function generarProyectil(torreElement) {
   });
 
   if (monstruoMasCercano) {
-    // Crear el elemento del proyectil y establecer su posición inicial en la torre
-    var proyectil = $("<div class='proyectil'></div>").css({
-      left: torreElement.offset().left,
-      top: torreElement.offset().top,
-    });
+    // Obtener el id del proyectil una vez que se decide disparar
+    proyectilId = "proyectil_" + Date.now();
 
-    // Agregar el proyectil al contenedor principal
-    $('#proyectiles').append(proyectil);
-    // Animar el proyectil para que se mueva hacia el monstruo más cercano
-    proyectil.animate(
-      {
-        left: monstruoMasCercano.offset().left,
-        top: monstruoMasCercano.offset().top,
-      },
-      2300 / tiempo, // Duración de la animación en milisegundos
-      function () {
-        // Una vez que la animación haya terminado (el proyectil llega al monstruo)
-        proyectil.remove(); // Eliminar el proyectil de la página
-        quitarVidaMonstruo2(monstruoMasCercano, danio); // Causar daño al monstruo
-      }
-    );
+    // Verificar si el monstruo aún tiene vida
+    if (monstruoMasCercano.attr("vida") > 0) {
+      // Crear el elemento del proyectil y establecer su posición inicial en el centro de la casa
+      var proyectil = $("<div class='proyectil'></div>").attr("id", proyectilId).css({
+        left: casaX + "px",
+        top: casaY + "px",
+      });
+
+      // Almacenar una referencia al monstruo al que está apuntando el proyectil
+      proyectilesEnVuelo[proyectilId] = monstruoMasCercano;
+
+      // Agregar el proyectil al contenedor principal
+      $('#casasContainer').append(proyectil);
+      var casaX = parseInt(torreElement.attr("x")) + torreElement.width() / 2; // Obtener el centro de la casa en el eje X
+      var casaY = parseInt(torreElement.attr("y")) + torreElement.height() / 2; // Obtener el centro de la casa en el eje Y
+      var monstruoX = parseInt(monstruoMasCercano.offset().left + monstruoMasCercano.width() / 2);
+      var monstruoY = parseInt(monstruoMasCercano.offset().top + monstruoMasCercano.height() / 2);
+
+      // Animar el proyectil para que se mueva hacia el monstruo más cercano
+      proyectil.animate(
+        {
+          left: monstruoX,
+          top: monstruoY,
+        },
+        4000 / tiempo, // Duración de la animación en milisegundos
+        function () {
+          // Una vez que la animación haya terminado (el proyectil llega al monstruo)
+          // Verificar si el monstruo aún está vivo antes de causar daño
+          var monstruo = proyectilesEnVuelo[proyectilId];
+          if (monstruo.attr("vida") > 0) {
+            quitarVidaMonstruo2(monstruo, daño); // Causar daño al monstruo
+          }
+          // Eliminar el proyectil de la lista de proyectiles en vuelo
+          delete proyectilesEnVuelo[proyectilId];
+          proyectil.remove(); // Eliminar el proyectil de la página
+        }
+      );
+    } else {
+      // Si el monstruo ya está muerto, simplemente no disparamos
+      delete proyectilesEnVuelo[proyectilId];
+      console.log("El monstruo ya está muerto, no se dispara.");
+    }
   }
 }

@@ -44,8 +44,8 @@ html {
   background-image: url("../../assets/img/glass.jpg");
   background-repeat: repeat;
   background-position: center;
-  background-size: 7%;
-  border-radius: 70%;
+  background-size: 6%;
+  border-radius: 80%;
   transform-origin: 30% 50%;
   overflow: hidden;
   position: absolute;
@@ -148,8 +148,8 @@ html {
 }
 
 .element {
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 17px;
   background-size: cover;
   position: absolute;
   z-index: 10;
@@ -183,6 +183,7 @@ html {
   background-image: url("../../assets/img/Bush_simple1_1.png");
   width: 25px;
   height: 25px;
+  z-index: 3;
 }
 .flower {
   background-image: url("../../assets/img/flower.png");
@@ -215,6 +216,7 @@ html {
 
 .cloud {
   position: absolute;
+  pointer-events: none; 
   z-index: 60 !important;
   background-size: contain;
   opacity: 0.6 !important;
@@ -274,12 +276,12 @@ html {
 }
 
 .proyectil {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
   background-color: black;
   border-radius: 50%;
   position: absolute;
-  z-index: 100; /* Asegura que la esfera esté por encima de otros elementos */
+  z-index: 10; /* Asegura que la esfera esté por encima de otros elementos */
 }
 .d-1:hover::after {
   content: "";
@@ -287,10 +289,9 @@ html {
   width: 400px; /* Diámetro del círculo */
   height: 400px; /* Diámetro del círculo */
   border-radius: 50%; /* Hace que el borde sea redondo */
-  background-color: rgba(255, 0, 0, 0.2); /* Color del círculo */
+  background-color: rgba(92, 76, 76, 0.2); /* Color del círculo */
   top: calc(-280%); /* Posición vertical del círculo */
-  border: 1px red solid;
-  border-color: red;
+ 
   left: calc(-260% ); /* Posición horizontal del círculo */
   pointer-events: none; /* Evita que el círculo interfiera con eventos de mouse */
   z-index: -1; /* Coloca el círculo detrás del contenido de la casa */
@@ -306,4 +307,15 @@ html {
   left: calc(50% - 50px); /* Posición horizontal del círculo */
   pointer-events: none; /* Evita que el círculo interfiera con eventos de mouse */
   z-index: -1; /* Coloca el círculo detrás del contenido de la casa */
+}
+
+.luna-de-sangre::after {
+  pointer-events: none; 
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 0, 0, 0.1); /* Ajusta el color y la opacidad según tus preferencias */
 }

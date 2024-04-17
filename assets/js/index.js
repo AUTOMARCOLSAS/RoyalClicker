@@ -24,7 +24,7 @@ var tiposDeDefensas = [
     precio: 100, // Aumentado el precio
     produccion: 5, // Reducida la producción
     tiempo: 10, // 5 cada 1 segundo
-    daño: 10,
+    daño: 30,
   },
   {
     nombre: "Flecheros",
@@ -39,7 +39,7 @@ var tiposDeDefensas = [
 
 var tiposDeMejoras = [
   {
-    nombre: "Generador principal",
+    nombre: "Coint por Click",
     id: "m-1",
     precio: 100, // Aumentado el precio
   },
@@ -145,7 +145,7 @@ function mostrarNumeroProduccion(produccion, x, y) {
     left: x + 5,
   });
 
-  $("#casasContainer").append(number);
+  $(".bg-fondo").append(number);
 
   // Animar el número antes de desaparecer
   number.animate({ top: "-=20", opacity: 0 }, 600, function () {
@@ -161,7 +161,7 @@ function sendLogs(logs) {
     $("#logs").append(divlogs);
   
     // Animar el número antes de desaparecer
-    divlogs.animate({ top: "-=40", opacity: 0 }, 4000, function () {
+    divlogs.animate({ top: "-=40", opacity: 0 }, 3000 / tiempo, function () {
       divlogs.remove();
     });
   }
@@ -210,7 +210,7 @@ function comprarCasa(indice) {
       var casaElement = $("<div class='casa " + tiposDeCasas[indice].id + "'>")
         .css({ position: "absolute", left: x + "px", top: y + "px" })
         .data("vida", vidaInicial) // Guardar la vida en los datos del elemento
-        .appendTo("#casasContainer");
+        .appendTo(".bg-fondo");
       casaElement.attr("id", "casa_" + idGenerated);
       var centroCasaX = x + casaElement.width() / 2;
       var centroCasaY = y + casaElement.height() / 2;
@@ -230,12 +230,15 @@ function comprarCasa(indice) {
           color: "white",
           zIndex: "1000000 !important",
         })
-        .appendTo("#casasContainer");
+        .appendTo(".bg-fondo");
         vidaElement.attr("id","vida_"+idGenerated);
       // Mostrar el cuadrado de la casa
       var casaSquare = $("#casaSquare");
       casaSquare.css({ left: x + "px", top: y + "px", display: "block" });
-      
+
+      casaElement.attr("x",x);
+      casaElement.attr("y",y);
+
       setInterval(function(){
         actualizarProduccionPorMinuto(indice);
         actualizarVidaCasa(casaElement, vidaElement);
@@ -387,9 +390,9 @@ function obtenerCantidadCasas(nombreCasa) {
 function generarPastoRoca() {
   $("#pastoRocaContainer").empty();
 
-  var cantidadPasto = 800;
-  var cantidadRoca = 120;
-  var cantidadArbolesG = 80;
+  var cantidadPasto = 900;
+  var cantidadRoca = 100;
+  var cantidadArbolesG = 130;
 
   for (var i = 0; i < cantidadPasto; i++) {
     var x = Math.random() * 100 + "%";
@@ -425,15 +428,20 @@ function generarPastoRoca() {
   for (var i = 0; i < cantidadRoca; i++) {
     var x = Math.random() * 100 + "%";
     var y = Math.random() * 100 + "%";
-
-    if (Math.random() < 0.6) {
+    if (Math.random() < 0.8) {
       rocaElement = $("<div class='element roca'>").css({
         position: "absolute",
         left: x,
         top: y,
       });
-    } else {
+    } else if (Math.random() < 0.3) {
       rocaElement = $("<div class='element mineral'>").css({
+        position: "absolute",
+        left: x,
+        top: y,
+      });
+    } else {
+      rocaElement = $("<div class='element roca-2'>").css({
         position: "absolute",
         left: x,
         top: y,

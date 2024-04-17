@@ -21,11 +21,11 @@ $(document).ready(function () {
   for (var i = 0; i < 6; i++) {
     var botonHtml = `
             <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-2">
-              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 14px;">
+              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 1;font-size: 14px;">
                   <div style="opacity: 1;">
                   <div class="row">
                       <div class="col-4">
-                      <img class="my-auto" src="./assets/img/${tiposDeCasas[i].id}.png" style="width: 60px; height:50px;" alt="${tiposDeCasas[i].nombre}">
+                      <img class="mb-2 mt-2" src="./assets/img/${tiposDeCasas[i].id}.png" style="width: 60px; height:50px;" alt="${tiposDeCasas[i].nombre}">
                       </div>
                       <div class="col-8">
                       ${tiposDeCasas[i].nombre} <br>
@@ -44,11 +44,11 @@ $(document).ready(function () {
   for (var i = 0; i < tiposDeCasas.length; i++) {
     var botonHtml2 = `
             <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-2">
-              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 0.9;font-size: 14px;">
+              <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa(${i})" style="opacity: 1;font-size: 14px;">
                   <div style="opacity: 1;">
                   <div class="row">
                       <div class="col-4">
-                      <img class="my-auto" src="./assets/img/${tiposDeCasas[i].id}.png" style="width: 60px; height:50px;" alt="${tiposDeCasas[i].nombre}">
+                      <img class="mb-2 mt-2" src="./assets/img/${tiposDeCasas[i].id}.png" style="width: 60px; height:50px;" alt="${tiposDeCasas[i].nombre}">
                       </div>
                       <div class="col-8">
                       ${tiposDeCasas[i].nombre} <br>
@@ -67,11 +67,11 @@ $(document).ready(function () {
   for (var i = 0; i < tiposDeDefensas.length; i++) {
     var botonHtml3 = `
       <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-2">
-        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa_Tropas(${i})" style="opacity: 0.9;font-size: 14px;">
+        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarCasa_Tropas(${i})" style="opacity: 1;font-size: 14px;">
             <div style="opacity: 1;">
             <div class="row">
                 <div class="col-4">
-                <img class="my-auto" src="./assets/img/${tiposDeDefensas[i].id}.png" style="width: 60px; height:50px;" alt="${tiposDeDefensas[i].nombre}">
+                <img class="mb-1 mt-2" src="./assets/img/icons/${tiposDeDefensas[i].id}.png" style="width: 40px; height:40px;" alt="${tiposDeDefensas[i].nombre}">
                 </div>
                 <div class="col-8">
                 ${tiposDeDefensas[i].nombre} <br>
@@ -90,11 +90,11 @@ $(document).ready(function () {
   for (var i = 0; i < tiposDeMejoras.length; i++) {
     var botonHtml4 = `
       <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-2">
-        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarMejora(${i})" style="opacity: 0.9;font-size: 14px;">
+        <button class="btn btn-dark border-0 shadow w-100 h-100 text-start py-0" onclick="comprarMejora(${i})" style="opacity: 1;font-size: 14px;">
             <div style="opacity: 1;">
             <div class="row">
                 <div class="col-4">
-                <img class="my-auto" src="./assets/img/icons/${tiposDeMejoras[i].id}.png" style="width: 40px; height:40px;" alt="${tiposDeMejoras[i].nombre}">
+                <img class="mb-1 mt-2" src="./assets/img/items/${tiposDeMejoras[i].id}.png" style="width: 40px; height:40px; ;" alt="${tiposDeMejoras[i].nombre}">
                 </div>
                 <div class="col-8">
                 ${tiposDeMejoras[i].nombre} <br>
@@ -179,7 +179,7 @@ function getRandomPosition() {
 function createCloud() {
   var containerClouds = $("#container-clouds");
 
-  for (var i = 0; i < 27; i++) {
+  for (var i = 0; i < 34; i++) {
     var x = Math.random() * 100 + "%";
     var y = Math.random() * 100 + "%";
 
